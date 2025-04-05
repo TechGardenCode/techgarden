@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "techgarden",
   "private": true,
   "scripts": {
     "build": "turbo run build",

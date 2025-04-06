@@ -1,10 +1,13 @@
 {
-  "name": "@techgarden/sprout-ui",
+  "name": "@techgarden/root",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start:dev": "ng serve --configuration development",
-    "build": "ng build",
+    "start": "ng serve",
+    "start:dev": "npx @tailwindcss/cli -i ./projects/root/src/styles/styles.css -o ./projects/root/styles/styles.css --watch",
+    "build": "npm run build:css && npm run build:lib",
+    "build:css": "npx @tailwindcss/cli -i ./projects/root/src/styles/styles.css -o ./projects/root/styles/styles.css",
+    "build:lib": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -25,7 +28,7 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^19.2.0",
+    "@angular-devkit/build-angular": "^19.2.6",
     "@angular/cli": "^19.2.0",
     "@angular/compiler-cli": "^19.2.0",
     "@types/jasmine": "~5.1.0",
@@ -35,6 +38,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "ng-packagr": "^19.2.0",
     "typescript": "~5.7.2"
   }
 }

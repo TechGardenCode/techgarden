@@ -27,6 +27,7 @@
               }
             ],
             "styles": [
+              "../../../node_modules/@techgarden/root/projects/root/styles/styles.css",
               "src/styles.css"
             ],
             "scripts": []

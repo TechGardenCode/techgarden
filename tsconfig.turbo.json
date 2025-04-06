@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@techgarden/root-lib": ["packages/root/projects/root/src/public-api.ts"],
+            "@techgarden/root-lib/*": ["packages/root/projects/root/projects/root/*"],
+            "@techgarden/*": ["packages/*/src/index.ts"]
+        }
+    }
+}

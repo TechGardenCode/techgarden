@@ -18,7 +18,8 @@
   },
   "packageManager": "npm@11.0.0",
   "workspaces": [
-    "apps/*",
+    "apps/ui/*",
+    "apps/service/*",
     "packages/*"
   ]
 }

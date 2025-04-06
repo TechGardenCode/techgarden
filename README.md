@@ -16,13 +16,32 @@ This Turborepo includes the following packages/apps:
 
 ### Apps and Packages
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+#### 🌱 Sprout
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+Where ideas begin. Tiny thoughts that can grow into something more. A clean, minimalist notes tool that encourages free thinking, like sprouts breaking soil
+
+- `@techgarden/sprout-ui`: a [NestJS](https://nestjs.com/) Service
+- `@techgarden/sprout-service`: an [Angular](https://angular.dev/) UI
+
+#### 🔔🍃 Chimes
+
+Gentle nudges in the wind. Ambient and non-intrusive, just like wind chimes reminding you without stress. Designed for peace of mind.
+
+#### ☀️🍂❄️🌸 Seasons
+
+Flow with the rhythm of time. A calendar that embraces natural cycles—days, weeks, and months like changing seasons. Elegant and soothing to use.
+
+#### 🪺📨 Nest
+
+A cozy home for your messages. Birds bring things to the nest—just like your inbox. A calm and focused environment for conversations.
+
+#### 🛖 Shed
+
+Store or nurture your files. "Shed" for utility, storage, and safety. "Planter" for active organization, like tending to digital seeds.
+
+#### 🪵🌿 Root
+
+The structure everything grows on. A foundational design system that supports your entire garden of tools. Clean, modular, and elegant.
 
 ### Utilities
 
@@ -38,7 +57,7 @@ To build all apps and packages, run the following command:
 
 ```
 cd my-turborepo
-pnpm build
+npm build
 ```
 
 ### Develop
@@ -47,7 +66,7 @@ To develop all apps and packages, run the following command:
 
 ```
 cd my-turborepo
-pnpm dev
+npm dev
 ```
 
 ### Remote Caching

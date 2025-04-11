@@ -1,0 +1,15 @@
+<div
+  *ngFor="let row of [].constructor(rows)"
+  class="flex items-center"
+  [ngClass]="gap"
+>
+  <div
+    *ngFor="let col of [].constructor(cols)"
+    [ngClass]="[
+      widthClass,
+      heightClass,
+      borderRadiusClass,
+      backgroundColorClass,
+    ]"
+  ></div>
+</div>

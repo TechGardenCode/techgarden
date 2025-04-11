@@ -4,7 +4,7 @@ import { RootComponent } from '@techgarden/root-lib';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RootComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

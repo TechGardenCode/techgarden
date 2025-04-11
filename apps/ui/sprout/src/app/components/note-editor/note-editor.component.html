@@ -1,0 +1,7 @@
+<div
+  class="block outline-0 pb-8"
+  contenteditable="true"
+  (keydown)="onKeydown($event)"
+  [innerHTML]="content | safeHtml"
+  #editor
+></div>

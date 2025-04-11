@@ -1,0 +1,21 @@
+.root-icon-field svg {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.root-icon-field svg:first-child {
+  left: 1rem;
+}
+
+.root-icon-field svg:last-child {
+  right: 1rem;
+}
+
+.root-icon-field input[rootInput]:not(:first-child) {
+  padding-inline-start: 3rem;
+}
+
+.root-icon-field input[rootInput]:not(:last-child) {
+  padding-inline-end: 3rem;
+}

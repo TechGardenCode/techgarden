@@ -43,6 +43,8 @@ Store or nurture your files. "Shed" for utility, storage, and safety. "Planter" 
 
 The structure everything grows on. A foundational design system that supports your entire garden of tools. Clean, modular, and elegant.
 
+- `@techgarden/root`: an [Angular](https://angular.dev/) Library
+
 ### Utilities
 
 This Turborepo has some additional tools already setup for you:

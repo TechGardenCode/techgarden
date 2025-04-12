@@ -1,0 +1,12 @@
+.git
+.angular
+.turbo
+.vscode
+node_modules/
+.editorconfig
+.gitignore
+Dockerfile
+.dockerignore
+README.md
+e2e/
+npm-debug.log

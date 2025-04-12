@@ -54,7 +54,6 @@ jobs:
     docker-build:
         needs: turbo-build
         runs-on: ubuntu-latest
-        if: "${{ fromJson(needs.turbo-build.outputs.apps) != '[]'}}"
         strategy:
             matrix:
                 app: ${{ fromJson(needs.turbo-build.outputs.apps) }}

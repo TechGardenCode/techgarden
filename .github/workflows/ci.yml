@@ -93,7 +93,7 @@ jobs:
             - name: Build and push the Docker image for ${{ matrix.app }}
               uses: docker/build-push-action@v5
               with:
-                  context: ./${{ steps.format-app-name.outputs.formatted_app_dir }}
+                  context: "{{defaultContext}}:${{ steps.format-app-name.outputs.formatted_app_dir }}"
                   push: true
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}

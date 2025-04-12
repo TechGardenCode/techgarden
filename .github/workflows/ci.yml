@@ -62,7 +62,7 @@ jobs:
             - name: Format app name
               id: format-app-name
               run: |
-                  FORMATTED_APP=$(echo ${{ matrix.app }} | awk -F'/' '{print $2"-"$1}')
+                  FORMATTED_APP=$(echo ${{ matrix.app }} | awk -F'/' '{print $3"-"$2}')
                   echo "formatted_app=${FORMATTED_APP}" >> "$GITHUB_OUTPUT"
                   echo "formatted_app=${FORMATTED_APP}"
             - name: Checkout
@@ -79,7 +79,7 @@ jobs:
               id: meta
               uses: docker/metadata-action@v5
               with:
-                  images: ${{ env.REGISTRY }}/${{ steps.format-app-name.outputs.formatted_app }}
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ steps.format-app-name.outputs.formatted_app }}
                   flavor: |
                       latest=auto
                       prefix=
@@ -90,7 +90,7 @@ jobs:
             - name: Build and push the Docker image for ${{ matrix.app }}
               uses: docker/build-push-action@v5
               with:
-                  context: ${{ matrix.app }}
+                  context: ./${{ matrix.app }}
                   push: true
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}

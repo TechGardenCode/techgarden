@@ -37,7 +37,7 @@ jobs:
                   echo "Turbo build output:"
                   cat .logs/turbo.log
 
-                  APPS=$(grep -oE 'Running build in apps/[^ ]+' .logs/turbo.log | awk '{print $4}' | cut -d '/' -f1-3 | sort -u)
+                  APPS=$(grep -oE 'apps/[^ ]+' .logs/turbo.log | sort -u)
 
                   echo "Apps that had a cache miss:"
                   echo "$APPS"

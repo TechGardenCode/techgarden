@@ -44,10 +44,12 @@ jobs:
                   # Clean and deduplicate
                     UNIQUE_APPS=$(echo "$APPS" | sort -u)
 
-                    # Convert to JSON array
-                    JSON_ARRAY=$(printf '%s\n' $APPS | jq -R . | jq -s .)
+                    
+                  # Build compact JSON array
+                  JSON_ARRAY=$(printf '['; printf '"%s",' $APPS | sed 's/,$//'; printf ']')
 
-                    echo "apps_to_build=$JSON_ARRAY" >> "$GITHUB_OUTPUT"
+                  # Export it cleanly without breaking GitHub's format
+                  echo "apps_to_build=${JSON_ARRAY}" >> "$GITHUB_OUTPUT"
     docker-build:
         needs: turbo-build
         runs-on: ubuntu-latest

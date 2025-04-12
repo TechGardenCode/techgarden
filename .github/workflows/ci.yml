@@ -52,7 +52,7 @@ jobs:
     docker-build:
         needs: turbo-build
         runs-on: ubuntu-latest
-        if: "${{ github.env.APPS_TO_BUILD != null && fromJson(github.env.APPS_TO_BUILD) != '[]'}}"
+        if: "${{ fromJson(github.env.APPS_TO_BUILD) != '[]'}}"
         strategy:
             matrix:
                 app: ${{ fromJson(github.env.APPS_TO_BUILD) }}

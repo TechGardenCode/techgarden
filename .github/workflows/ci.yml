@@ -46,15 +46,15 @@ jobs:
                   JSON_ARRAY=$(printf '['; printf '"%s",' $APPS | sed 's/,$//'; printf ']')
 
                   # Export it cleanly without breaking GitHub's format
-                  echo "apps_to_build=${JSON_ARRAY}" >> "$GITHUB_ENV"
-                  echo $GITHUB_ENV
+                  echo "APPS_TO_BUILD=${JSON_ARRAY}" >> $GITHUB_ENV
+                  echo github.env.APPS_TO_BUILD
     docker-build:
         needs: turbo-build
         runs-on: ubuntu-latest
-        if: "${{ github.env.apps_to_build != null && fromJson(github.env.apps_to_build) != '[]'}}"
+        if: "${{ github.env.APPS_TO_BUILD != null && fromJson(github.env.APPS_TO_BUILD) != '[]'}}"
         strategy:
             matrix:
-                app: ${{ fromJson(github.env.apps_to_build) }}
+                app: ${{ fromJson(github.env.APPS_TO_BUILD) }}
         steps:
             - name: Checkout
               uses: actions/checkout@v4

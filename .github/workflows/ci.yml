@@ -65,6 +65,9 @@ jobs:
                   FORMATTED_APP=$(echo ${{ matrix.app }} | awk -F'/' '{print $3"-"$2}')
                   echo "formatted_app=${FORMATTED_APP}" >> "$GITHUB_OUTPUT"
                   echo "formatted_app=${FORMATTED_APP}"
+                  FORMATTED_APP_DIR=$(echo ${{ matrix.app }} | awk -F'/' '{print $1"/"$2/$3}')
+                  echo "formatted_app_dir=${FORMATTED_APP_DIR}" >> "$GITHUB_OUTPUT"
+                  echo "formatted_app_dir=${FORMATTED_APP_DIR}"
             - name: Checkout
               uses: actions/checkout@v4
             - name: Set up Docker Buildx for ${{ matrix.app }}
@@ -90,7 +93,7 @@ jobs:
             - name: Build and push the Docker image for ${{ matrix.app }}
               uses: docker/build-push-action@v5
               with:
-                  context: ./${{ matrix.app }}
+                  context: ./${{ steps.format-app-name.outputs.formatted_app_dir }}
                   push: true
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}

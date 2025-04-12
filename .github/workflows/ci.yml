@@ -47,7 +47,8 @@ jobs:
 
                   # Export it cleanly without breaking GitHub's format
                   echo "APPS_TO_BUILD=${JSON_ARRAY}" >> $GITHUB_ENV
-                  echo github.env.APPS_TO_BUILD
+                  echo $GITHUB_ENV
+                  echo "APPS_TO_BUILD=${JSON_ARRAY}"
     docker-build:
         needs: turbo-build
         runs-on: ubuntu-latest

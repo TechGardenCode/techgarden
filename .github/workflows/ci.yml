@@ -12,9 +12,6 @@ env:
 jobs:
     build-and-docker:
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                app: []
         steps:
             - name: Check out code
               uses: actions/checkout@v4

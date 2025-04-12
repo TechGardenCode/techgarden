@@ -1,41 +1,34 @@
 name: ci
-
-on:
+"on":
     push:
         branches:
             - main
     pull_request:
         branches:
             - main
-
 env:
     REGISTRY: ghcr.io
-    IMAGE_NAME: ${{ github.repository }}
-
+    IMAGE_NAME: "${{ github.repository }}"
 jobs:
     turbo-build:
         runs-on: ubuntu-latest
         steps:
             - name: Check out code
               uses: actions/checkout@v4
-
             - name: Cache turbo build setup
               uses: actions/cache@v4
               with:
                   path: .turbo
-                  key: ${{ runner.os }}-turbo-${{ github.sha }}
+                  key: "${{ runner.os }}-turbo-${{ github.sha }}"
                   restore-keys: |
                       ${{ runner.os }}-turbo-
-
             - name: Setup Node.js environment
               uses: actions/setup-node@v4
               with:
                   node-version: 22
-                  cache: "npm"
-
+                  cache: npm
             - name: Install dependencies
               run: npm ci
-
             - name: Build
               run: |
                   mkdir -p .logs
@@ -48,20 +41,26 @@ jobs:
                   echo "Apps that had a cache miss:"
                   echo "$APPS"
 
-                  APPS_JSON=$(echo "$APPS" | jq -R . | jq -s .)
-                  echo "apps_to_build=$APPS_JSON" >> $GITHUB_OUTPUT
+                  # Clean and deduplicate
+                    UNIQUE_APPS=$(echo "$APPS" | sort -u)
+
+                    # Convert to JSON array
+                    JSON_ARRAY=$(jq -n --argjson arr "$(printf '%s\n' "$UNIQUE_APPS" | jq -R . | jq -s .)" '$arr')
+
+                    echo "apps_to_build=$JSON_ARRAY" >> $GITHUB_ENV
+              env:
+                  GITHUB_ENV: ${{ github.env }}
     docker-build:
         needs: turbo-build
         runs-on: ubuntu-latest
-        if: ${{ fromJson(needs.turbo-build.outputs.apps_to_build) != '[]' }}
+        if: "${{ fromJson(github.env.apps_to_build) != '[]' }}"
         strategy:
             matrix:
-                app: ${{ fromJson(needs.turbo-build.outputs.apps_to_build) }}
+                app: ${{ fromJson(github.env.apps_to_build) }}
         steps:
             - name: Checkout
               uses: actions/checkout@v4
-
-            - name: Build Docker image for ${{ matrix.app }}
+            - name: "Build Docker image for ${{ matrix.app }}"
               run: |
-                echo "Building Docker image for ${{ matrix.app }}"
-                #   docker build -t your-org/${{ matrix.app }} ./${{ matrix.app }}
+                  echo "Building Docker image for ${{ matrix.app }}"
+                  #   docker build -t your-org/${{ matrix.app }} ./${{ matrix.app }}

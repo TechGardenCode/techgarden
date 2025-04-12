@@ -5,6 +5,9 @@ import {
   RootButton,
   RootIconField,
   RootInput,
+  RootLayoutService,
+  RootShimmer,
+  RootBreakpoint,
 } from '@techgarden/root-lib';
 import { CommonModule } from '@angular/common';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -26,7 +29,6 @@ import {
 } from '@ng-icons/heroicons/outline';
 import { HttpClient } from '@angular/common/http';
 import { delay, of, OperatorFunction, tap } from 'rxjs';
-import { RootShimmer } from '../../../../../../../packages/root/projects/root/src/lib/components/shimmer/shimmer.component';
 
 @Component({
   selector: 'app-index',
@@ -64,6 +66,7 @@ import { RootShimmer } from '../../../../../../../packages/root/projects/root/sr
 export class IndexComponent implements OnInit, AfterViewInit {
   isSidebarVisible = true;
   visibleEditorActions = 4;
+  activePageBreakpoint: RootBreakpoint = 'sm';
 
   noteState: any = {
     data: undefined,
@@ -249,7 +252,10 @@ export class IndexComponent implements OnInit, AfterViewInit {
     },
   ];
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly rootLayoutService: RootLayoutService,
+  ) {}
 
   ngOnInit() {
     this.openFolder(this.quickLinks[0]);
@@ -261,17 +267,30 @@ export class IndexComponent implements OnInit, AfterViewInit {
 
   @HostListener('window:resize')
   onResize() {
-    const editorHeader = document.getElementById('editorHeader');
-    if (editorHeader) {
-      const pageWidth = window.innerWidth;
-      const editorHeaderWidth = editorHeader.offsetWidth;
-      const outerWidth = pageWidth - 32; // todo: adjust with left sidebars and screensize
-      const availButtonsWidth = Math.min(outerWidth, editorHeaderWidth) - 208;
-      const numButtons = Math.floor(Math.max(120, availButtonsWidth) / 40);
-      this.visibleEditorActions = Math.min(
-        Math.min(4, numButtons),
-        this.editorActions.length,
-      );
+    const pageWidth = window.innerWidth;
+    const editorWidth = pageWidth - this.getLeftSidebarWidth() - 32;
+    const availButtonsWidth = editorWidth - 208;
+    const numButtons = Math.floor(Math.max(120, availButtonsWidth) / 40);
+    this.visibleEditorActions = Math.min(
+      Math.min(6, numButtons),
+      this.editorActions.length,
+    );
+  }
+
+  getLeftSidebarWidth(): number {
+    const breakpoint = this.rootLayoutService.rootBreakpoint;
+    switch (breakpoint) {
+      case 'xs':
+        return 0;
+      case 'sm':
+        return 224;
+      case 'md':
+        return 320;
+      case 'lg':
+      case 'xl':
+      case '2xl':
+      default:
+        return 320 + 256;
     }
   }
 

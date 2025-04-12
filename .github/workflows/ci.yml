@@ -31,13 +31,14 @@ jobs:
               run: npm ci
             - name: Build
               run: |
+                  rm -rf .turbo/cache
                   mkdir -p .logs
                   npm run build > .logs/turbo.log 2>&1
                   echo "Turbo build output:"
                   cat .logs/turbo.log
 
                   APPS=$(grep -oE 'Running build in apps/[^ ]+' .logs/turbo.log | awk '{print $4}' | cut -d '/' -f1-3 | sort -u)
-                  
+
                   echo "Apps that had a cache miss:"
                   echo "$APPS"
                     
@@ -45,14 +46,14 @@ jobs:
                   JSON_ARRAY=$(printf '['; printf '"%s",' $APPS | sed 's/,$//'; printf ']')
 
                   # Export it cleanly without breaking GitHub's format
-                  echo "apps_to_build=${JSON_ARRAY}" >> "$GITHUB_OUTPUT"
+                  echo "apps_to_build=${JSON_ARRAY}" >> "$GITHUB_ENV"
     docker-build:
         needs: turbo-build
         runs-on: ubuntu-latest
-        if: "${{ fromJson(needs.turbo-build.outputs.apps_to_build) != '[]' }}"
+        if: "${{ github.env.apps_to_build != null && fromJson(github.env.apps_to_build) != '[]'}}"
         strategy:
             matrix:
-                app: ${{ fromJson(needs.turbo-build.outputs.apps_to_build) }}
+                app: ${{ fromJson(github.env.apps_to_build) }}
         steps:
             - name: Checkout
               uses: actions/checkout@v4

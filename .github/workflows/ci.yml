@@ -45,18 +45,16 @@ jobs:
                     UNIQUE_APPS=$(echo "$APPS" | sort -u)
 
                     # Convert to JSON array
-                    JSON_ARRAY=$(jq -n --argjson arr "$(printf '%s\n' "$UNIQUE_APPS" | jq -R . | jq -s .)" '$arr')
+                    JSON_ARRAY=$(printf '%s\n' $APPS | jq -R . | jq -s .)
 
-                    echo "apps_to_build=$JSON_ARRAY" >> $GITHUB_ENV
-              env:
-                  GITHUB_ENV: ${{ github.env }}
+                    echo "apps_to_build=$JSON_ARRAY" >> "$GITHUB_OUTPUT"
     docker-build:
         needs: turbo-build
         runs-on: ubuntu-latest
-        if: "${{ fromJson(github.env.apps_to_build) != '[]' }}"
+        if: "${{ fromJson(needs.turbo-build.outputs.apps_to_build) != '[]' }}"
         strategy:
             matrix:
-                app: ${{ fromJson(github.env.apps_to_build) }}
+                app: ${{ fromJson(needs.turbo-build.outputs.apps_to_build) }}
         steps:
             - name: Checkout
               uses: actions/checkout@v4

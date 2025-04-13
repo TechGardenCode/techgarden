@@ -10,12 +10,13 @@ env:
     REGISTRY: ghcr.io
     IMAGE_NAME: "${{ github.repository }}"
 jobs:
-    build-and-dockerize:
+    turbo-build:
         runs-on: ubuntu-latest
+        outputs:
+            matrix: ${{ steps.turbo-build.outputs.apps }}
         steps:
             - name: Check out code
               uses: actions/checkout@v4
-
             - name: Cache turbo build setup
               uses: actions/cache@v4
               with:
@@ -23,67 +24,85 @@ jobs:
                   key: "${{ runner.os }}-turbo-${{ github.sha }}"
                   restore-keys: |
                       ${{ runner.os }}-turbo-
-
             - name: Setup Node.js environment
               uses: actions/setup-node@v4
               with:
                   node-version: 22
                   cache: npm
-
             - name: Install dependencies
               run: npm ci
-
-            - name: Build with Turbo
+            - name: Build
               id: turbo-build
               run: |
                   rm -rf .turbo/cache
                   mkdir -p .logs
-                  npm run build > .logs/turbo.log 2>&1
-                  echo "Turbo build output:"
-                  cat .logs/turbo.log
+                  
+                  turbo run affected --dry=json
+    #               npm run build > .logs/turbo.log 2>&1
+    #               echo "Turbo build output:"
+    #               cat .logs/turbo.log
 
-                  APPS=$(grep -oE 'apps/[^ ]+' .logs/turbo.log | sort -u)
+    #               APPS=$(grep -oE 'apps/[^ ]+' .logs/turbo.log | sort -u)
 
-                  echo "Apps that had a cache miss:"
-                  echo "$APPS"
+    #               echo "Apps that had a cache miss:"
+    #               echo "$APPS"
+                    
+    #               # Build compact JSON array
+    #               JSON_ARRAY=$(printf '['; printf '"%s",' $APPS | sed 's/,$//'; printf ']')
 
-                  # Build compact JSON array
-                  JSON_ARRAY=$(printf '['; printf '"%s",' $APPS | sed 's/,$//'; printf ']')
-
-                  # Export it cleanly without breaking GitHub's format
-                  echo "apps=${JSON_ARRAY}" >> "$GITHUB_ENV"
-
-            - name: Iterate over apps and build Docker images
-              env:
-                  APPS: ${{ env.apps }}
-              run: |
-                  echo "Apps to process: $APPS"
-                  for APP in $(echo $APPS | jq -r '.[]'); do
-                    echo "Processing app: $APP"
-
-                    FORMATTED_APP=$(echo $APP | awk -F'/' '{print $3"-"$2}')
-                    FORMATTED_APP_DIR=$(echo $APP | awk -F'/' '{print $1"/"$2"/"$3}')
-
-                    echo "Formatted app: $FORMATTED_APP"
-                    echo "Formatted app directory: $FORMATTED_APP_DIR"
-
-                    # Set up Docker Buildx
-                    docker buildx create --use
-
-                    # Login to GitHub Container Registry
-                    echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
-
-                    # Extract metadata for Docker
-                    TAGS="latest,${{ github.sha }}"
-                    LABELS=""
-
-                    # Build and push the Docker image
-                    docker buildx build \
-                      --push \
-                      --cache-from=type=gha \
-                      --cache-to=type=gha,mode=max \
-                      --tag "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/$FORMATTED_APP:latest" \
-                      --tag "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/$FORMATTED_APP:${{ github.sha }}" \
-                      --labels "$LABELS" \
-                      "./$FORMATTED_APP_DIR"
-                  done
+    #               # Export it cleanly without breaking GitHub's format
+    #               echo "apps=${JSON_ARRAY}" >> "$GITHUB_OUTPUT"
+    #               echo "apps=${JSON_ARRAY}"
+                  
+    # docker-build:
+    #     needs: turbo-build
+    #     permissions:
+    #         contents: read
+    #         packages: write
+    #     runs-on: ubuntu-latest
+    #     if: ${{ needs.turbo-build.outputs.matrix != '[]' }}
+    #     strategy:
+    #         matrix:
+    #             app: ${{ fromJson(needs.turbo-build.outputs.matrix) }}
+    #     steps:
+    #         - name: Format app name
+    #           id: format-app-name
+    #           run: |
+    #               FORMATTED_APP=$(echo ${{ matrix.app }} | awk -F'/' '{print $3"-"$2}')
+    #               echo "formatted_app=${FORMATTED_APP}" >> "$GITHUB_OUTPUT"
+    #               echo "formatted_app=${FORMATTED_APP}"
+    #               FORMATTED_APP_DIR=$(echo ${{ matrix.app }} | awk -F'/' '{print $1"/"$2"/"$3}')
+    #               echo "formatted_app_dir=${FORMATTED_APP_DIR}" >> "$GITHUB_OUTPUT"
+    #               echo "formatted_app_dir=${FORMATTED_APP_DIR}"
+    #         - name: Checkout
+    #           uses: actions/checkout@v4
+    #         - name: Set up Docker Buildx for ${{ matrix.app }}
+    #           uses: docker/setup-buildx-action@v3
+    #         - name: Login to GitHub Container Registry
+    #           uses: docker/login-action@v3
+    #           with:
+    #               registry: ghcr.io
+    #               username: ${{ github.repository_owner }}
+    #               password: ${{ secrets.GITHUB_TOKEN }}
+    #         - name: Extract metadata (tags, labels) for Docker
+    #           id: meta
+    #           uses: docker/metadata-action@v5
+    #           with:
+    #               images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ steps.format-app-name.outputs.formatted_app }}
+    #               flavor: |
+    #                   latest=auto
+    #                   prefix=
+    #                   suffix=
+    #               tags: |
+    #                   type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+    #                   type=sha,prefix=,format=long
+    #         - name: Build and push the Docker image for ${{ matrix.app }}
+    #           uses: docker/build-push-action@v5
+    #           with:
+    #               context: "./${{ steps.format-app-name.outputs.formatted_app_dir }}"
+    #               file: "./${{ steps.format-app-name.outputs.formatted_app_dir }}/Dockerfile"
+    #               push: true
+    #               tags: ${{ steps.meta.outputs.tags }}
+    #               labels: ${{ steps.meta.outputs.labels }}
+    #               cache-from: type=gha
+    #               cache-to: type=gha,mode=max

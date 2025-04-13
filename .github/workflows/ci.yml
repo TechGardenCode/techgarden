@@ -66,7 +66,7 @@ jobs:
               id: skip-check
               run: |
                   echo "skip=false" >> "$GITHUB_ENV"
-                  if [[ "${{ matrix.app.package }}" != "@techgarden/sprout-ui" && "${{ matrix.app.package }} != '@techgarden/sprout-service" ]]; then
+                  if [[ "${{ matrix.app.package }}" != "@techgarden/sprout-ui" && "${{ matrix.app.package }} != "@techgarden/sprout-service" ]]; then
                       echo "Skipping build for ${{ matrix.app.package }}"
                       echo "skip=true" >> "$GITHUB_ENV"
                   else

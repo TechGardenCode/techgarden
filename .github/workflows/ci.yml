@@ -37,7 +37,7 @@ jobs:
                   rm -rf .turbo/cache
                   mkdir -p .logs
                   
-                  turbo run affected --dry=json
+                  npm run affected --dry=json
     #               npm run build > .logs/turbo.log 2>&1
     #               echo "Turbo build output:"
     #               cat .logs/turbo.log

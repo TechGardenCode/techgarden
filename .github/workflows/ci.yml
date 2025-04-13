@@ -40,8 +40,11 @@ jobs:
                   echo "Turbo build output:"
                   cat .logs/turbo.log
 
+                  awk 'BEGIN {found=0} /\{/ {found=1} {if (found) print}' ./logs/turbo.log > ./logs/turbo.json
+
+
                   # Assuming the JSON data is saved in a file called 'output.json'
-                  missed_packages=$(jq -r '.tasks[] | select(.cache.status == "MISS") | .package' output.json)
+                  missed_packages=$(jq -r '.tasks[] | select(.cache.status == "MISS") | .package' ./logs/turbo.json)
 
                   # Print the missed packages as an array
                   echo "Missed Packages: [$(echo "$missed_packages" | paste -sd,)]"

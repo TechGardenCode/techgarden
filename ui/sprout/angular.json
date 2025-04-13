@@ -30,7 +30,7 @@
               }
             ],
             "styles": [
-              "@techgarden/root-lib/projects/root/styles/styles.css",
+              "@techgarden/root-lib/projects/root-lib/styles/styles.css",
               "src/styles.css"
             ],
             "scripts": []

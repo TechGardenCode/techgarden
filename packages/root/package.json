@@ -2,14 +2,14 @@
   "name": "@techgarden/root-lib",
   "version": "0.0.0",
   "private": true,
-  "main": "./dist/root/fesm2022/ui.mjs",
-  "types": "./dist/root/index.d.ts",
+  "main": "./dist/root-lib/fesm2022/root-lib.mjs",
+  "types": "./dist/root-lib/index.d.ts",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "start:dev": "npx @tailwindcss/cli -i ./projects/root/src/styles/styles.css -o ./projects/root/styles/styles.css --watch",
+    "start:dev": "npx @tailwindcss/cli -i ./projects/root-lib/src/styles/styles.css -o ./projects/root-lib/styles/styles.css --watch",
     "build": "npm run build:css && npm run build:lib",
-    "build:css": "npx @tailwindcss/cli -i ./projects/root/src/styles/styles.css -o ./projects/root/styles/styles.css",
+    "build:css": "npx @tailwindcss/cli -i ./projects/root-lib/src/styles/styles.css -o ./projects/root-lib/styles/styles.css",
     "build:lib": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

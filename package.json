@@ -13,9 +13,9 @@
     },
     "devDependencies": {
         "@techgarden/eslint-config": "*",
+        "eslint": "^8.57.0",
         "prettier": "^3.5.3",
-        "turbo": "^2.5.0",
-        "typescript": "5.8.2"
+        "turbo": "^2.5.0"
     },
     "engines": {
         "node": ">=18"

@@ -59,6 +59,10 @@ jobs:
             matrix:
                 app: ${{ fromJson(needs.turbo-affected.outputs.matrix) }}
         steps:
+            - name: Check if package is '@techgarden/sprout-ui'
+              if: ${{ matrix.app.package != '@techgarden/sprout-ui' }}
+              run: echo "Skipping build for ${{ matrix.app.package }}"
+              continue-on-error: true
             - name: Checkout
               uses: actions/checkout@v4
             - name: Cache turbo build setup
@@ -69,7 +73,6 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-turbo-
             - name: Build ui for ${{ matrix.app.package }}
-              if: ${{ matrix.app.package == '@techgarden/sprout-ui' }}
               run: |
                   npx -p turbo turbo prune ${{ matrix.app.package }} --docker
                   cd ./out

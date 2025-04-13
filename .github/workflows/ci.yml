@@ -72,12 +72,11 @@ jobs:
               if: ${{ matrix.app.package == '@techgarden/sprout-ui' }}
               run: |
                   npx -p turbo turbo prune ${{ matrix.app.package }} --docker
-                  cd ./out/json
-                  npm ci
-                  cd ../
+                  cd ./out
                   cp -r ./json/* ./full
                   cd ./full
-                  npx turbo run build
+                  npm ci
+                  npm run build
             - name: Set up Docker Buildx for ${{ matrix.app.package }}
               uses: docker/setup-buildx-action@v3
             - name: Login to GitHub Container Registry
@@ -101,8 +100,8 @@ jobs:
             - name: Build and push the Docker image for ${{ matrix.app.package }}
               uses: docker/build-push-action@v5
               with:
-                  context: "${{ matrix.app.directory }}"
-                  file: "${{ matrix.app.directory }}/Dockerfile"
+                  context: "./out/full/${{ matrix.app.directory }}"
+                  file: "./out/full/${{ matrix.app.directory }}/Dockerfile"
                   push: true
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}

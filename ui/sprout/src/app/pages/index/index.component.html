@@ -30,10 +30,47 @@
       </button>
     </div>
     <div class="flex flex-col md:pl-4 lg:pl-8 gap-8">
-      <div class="flex flex-col">
+      <ng-container *ngIf="!folderGroups.loading && !folderGroups.firstLoad">
+        <div class="flex flex-col" *ngFor="let folder of folderGroups.data">
+          <div class="mb-2">{{ folder.title }}</div>
+          <a
+            tabindex="0"
+            class="cursor-pointer hover:bg-black/5 active:bg-black/10 hover:dark:bg-white/5 active:dark:bg-white/10 -ml-8 pl-8 rounded-md py-2 flex items-center gap-2 text-sm text-zinc-800 dark:text-zinc-200"
+            *ngFor="let folder of folder.folders"
+            (click)="getFolderById(folder.id)"
+          >
+            <div class="w-6">
+              <svg
+                *ngIf="folder.icon"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="size-5"
+                [ngClass]="folder.color"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"
+                />
+              </svg>
+            </div>
+            <div>
+              {{ folder.title }}
+              <span class="text-zinc-600 dark:text-zinc-400">{{
+                folder.count
+              }}</span>
+            </div>
+          </a>
+        </div>
+      </ng-container>
+      <!-- <div class="flex flex-col">
         <div class="mb-2">Quick links</div>
         <a
-          class="cursor-pointer hover:bg-white/5 -ml-8 pl-8 rounded-md py-2 flex items-center gap-2 text-sm text-zinc-800 dark:text-zinc-200"
+          tabindex="0"
+          class="cursor-pointer hover:bg-black/5 active:bg-black/10 hover:dark:bg-white/5 active:dark:bg-white/10 -ml-8 pl-8 rounded-md py-2 flex items-center gap-2 text-sm text-zinc-800 dark:text-zinc-200"
           *ngFor="let quickLink of quickLinks"
           (click)="openFolder(quickLink)"
         >
@@ -65,7 +102,8 @@
       <div class="flex flex-col">
         <div class="mb-2">Folders</div>
         <a
-          class="cursor-pointer hover:bg-white/5 -ml-8 pl-8 rounded-md py-2 flex items-center gap-2 text-sm text-zinc-800 dark:text-zinc-200"
+          tabindex="0"
+          class="cursor-pointer hover:bg-black/5 active:bg-black/10 hover:dark:bg-white/5 active:dark:bg-white/10 -ml-8 pl-8 rounded-md py-2 flex items-center gap-2 text-sm text-zinc-800 dark:text-zinc-200"
           *ngFor="let folder of folders"
         >
           <div class="w-6">
@@ -97,7 +135,8 @@
       <div class="flex flex-col">
         <div class="mb-2">Tags</div>
         <a
-          class="cursor-pointer hover:bg-white/5 -ml-8 pl-8 rounded-md py-2 flex items-center gap-2 text-sm text-zinc-800 dark:text-zinc-200"
+          tabindex="0"
+          class="cursor-pointer hover:bg-black/5 active:bg-black/10 hover:dark:bg-white/5 active:dark:bg-white/10 -ml-8 pl-8 rounded-md py-2 flex items-center gap-2 text-sm text-zinc-800 dark:text-zinc-200"
           *ngFor="let tag of tags"
         >
           <div class="w-6">
@@ -130,7 +169,7 @@
             }}</span>
           </div>
         </a>
-      </div>
+      </div> -->
     </div>
   </div>
   <div
@@ -171,23 +210,24 @@
         rootButton
         shape="circle"
         modifier="primary"
-        class="shrink-0 ml-auto"
+        class="shrink-0 ml-auto hover:bg-black/5 active:bg-black/10 hover:dark:bg-white/5 active:dark:bg-white/10"
       >
         <ng-icon name="heroPlus"></ng-icon>
       </button>
     </div>
     <div
       class="flex flex-col gap-4"
-      *ngIf="!folderState.loading; else folderLoading"
+      *ngIf="!openedFolder.loading && !openedFolder.firstLoad; else folderLoading"
     >
       <div class="flex items-center gap-4 mb-4">
         <ng-icon name="heroBoltSlash"></ng-icon>
-        <div>{{ folderState.data.title }}</div>
+        <div>{{ openedFolder.data.title }}</div>
       </div>
       <a
-        class="flex gap-4 hover:bg-black/5 hover:dark:bg-white/5 active:bg-black/10 active:dark:bg-white/10 cursor-pointer px-4 -mx-4 pt-4 -mt-4"
-        *ngFor="let note of folderState.data.notes"
-        (click)="openNote(note)"
+        tabindex="0"
+        class="flex gap-4 hover:bg-black/5 active:bg-black/10 hover:dark:bg-white/5 active:dark:bg-white/10 cursor-pointer px-4 -mx-4 pt-4 -mt-4"
+        *ngFor="let note of openedFolder.data.notes"
+        (click)="getNoteContentByNoteId(note.id)"
       >
         <div
           class="bg-red-800 dark:bg-red-200 w-4 h-4 rounded-full shrink-0 mt-1"
@@ -233,11 +273,11 @@
     class="p-4 pb-0 grow flex flex-col gap-4 bg-zinc-200 dark:bg-zinc-800 max-h-lvh"
   >
     <div class="h-10 flex items-center justify-between" id="editorHeader">
-      <ng-container *ngIf="!noteState.loading">
+      <ng-container *ngIf="!noteContent.loading && !noteContent.firstLoad">
         <!-- Something C -->
         <div class="flex items-center gap-4 min-w-[208px]">
           <div class="text-nowrap">
-            {{ folderState.data.title }}
+            {{ openedFolder.data.title }}
           </div>
           <button
             rootButton
@@ -274,8 +314,8 @@
     </div>
     <div class="-mx-4 px-8 grow overflow-y-auto">
       <sprout-note-editor
-        [content]="noteState.data.content"
-        *ngIf="!noteState.loading; else noteLoading"
+        [content]="noteContent.data"
+        *ngIf="!noteContent.loading && !noteContent.firstLoad; else noteLoading"
       ></sprout-note-editor>
       <ng-template #noteLoading>
         <div class="flex flex-col">

@@ -14,7 +14,7 @@ import { SafeHtmlPipe } from '../../pipes/safe-html.pipe';
 })
 export class NoteEditorComponent {
   @ViewChild('editor') editor!: ElementRef<HTMLElement>;
-  @Input() content: string = '';
+  @Input() content?: string = '';
 
   onKeydown(event: KeyboardEvent) {
     // console.log(window.getSelection());

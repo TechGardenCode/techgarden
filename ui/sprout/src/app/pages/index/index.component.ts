@@ -29,6 +29,8 @@ import {
 } from '@ng-icons/heroicons/outline';
 import { HttpClient } from '@angular/common/http';
 import { delay, of, OperatorFunction, tap } from 'rxjs';
+import { ApiService } from '../../services/api.service';
+import { ApiState } from '../../model/api-state.type';
 
 @Component({
   selector: 'app-index',
@@ -76,6 +78,27 @@ export class IndexComponent implements OnInit, AfterViewInit {
   };
 
   folderState: any = {
+    data: undefined,
+    loading: false,
+    error: undefined,
+    firstLoad: true,
+  };
+
+  folderGroups: ApiState<any[]> = {
+    data: undefined,
+    loading: false,
+    error: undefined,
+    firstLoad: true,
+  };
+
+  openedFolder: ApiState<any> = {
+    data: undefined,
+    loading: false,
+    error: undefined,
+    firstLoad: true,
+  };
+
+  noteContent: ApiState<string> = {
     data: undefined,
     loading: false,
     error: undefined,
@@ -255,10 +278,62 @@ export class IndexComponent implements OnInit, AfterViewInit {
   constructor(
     private readonly http: HttpClient,
     private readonly rootLayoutService: RootLayoutService,
+    private readonly apiService: ApiService,
   ) {}
 
   ngOnInit() {
-    this.openFolder(this.quickLinks[0]);
+    this.initSubs();
+    this.getFolderGroups();
+    // this.openFolder(this.quickLinks[0]);
+  }
+
+  initSubs() {
+    this.apiService.folders$.subscribe((folders) => {
+      this.folderGroups = folders;
+      if (this.folderGroups.loading || this.folderGroups.firstLoad) {
+        return;
+      }
+      const firstFolderGroup = folders.data?.[0];
+      if (!firstFolderGroup) {
+        return;
+      }
+      const firstFolder = firstFolderGroup.folders?.[0];
+      if (!firstFolder) {
+        return;
+      }
+      this.getFolderById(firstFolder.id);
+    });
+
+    this.apiService.folder$.subscribe((folder) => {
+      this.openedFolder = folder;
+      if (this.openedFolder.loading || this.openedFolder.firstLoad) {
+        return;
+      }
+      if (!this.openedFolder.data?.notes.length) {
+        return;
+      }
+      const firstNote = this.openedFolder.data.notes[0];
+      if (!firstNote) {
+        return;
+      }
+      this.getNoteContentByNoteId(firstNote.id);
+    });
+
+    this.apiService.noteContent$.subscribe((noteContent) => {
+      this.noteContent = noteContent;
+    });
+  }
+
+  getFolderGroups() {
+    this.apiService.getFolders();
+  }
+
+  getFolderById(id: string) {
+    this.apiService.getFolderById(id);
+  }
+
+  getNoteContentByNoteId(noteId: string) {
+    this.apiService.getNoteContentByNoteId(noteId);
   }
 
   ngAfterViewInit() {

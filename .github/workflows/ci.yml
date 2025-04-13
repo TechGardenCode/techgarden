@@ -34,7 +34,6 @@ jobs:
             - name: Build
               id: turbo-build
               run: |
-                  rm -rf .turbo/cache
                   mkdir -p .logs
                   
                   npm run summarize

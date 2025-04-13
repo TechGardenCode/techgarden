@@ -111,7 +111,7 @@ jobs:
               id: meta
               uses: docker/metadata-action@v5
               with:
-                  images: ${{ env.REGISTRY }}/techgarden/${{ matrix.app.name }}
+                  images: ${{ env.REGISTRY }}/techgardencode/${{ matrix.app.name }}
                   flavor: |
                       latest=auto
                       prefix=

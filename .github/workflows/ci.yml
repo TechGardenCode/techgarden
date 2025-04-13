@@ -46,6 +46,7 @@ jobs:
 
                   # Print the missed packages as a JSON array
                   echo "apps=$missed_packages" >> "$GITHUB_OUTPUT"
+                  echo "apps=$missed_packages"
 
     docker-build:
         needs: turbo-affected
@@ -67,11 +68,16 @@ jobs:
                   key: "${{ runner.os }}-turbo-${{ github.sha }}"
                   restore-keys: |
                       ${{ runner.os }}-turbo-
-            - name: Install dependencies
-              run: npm ci
-            - name: Build
+            - name: Build ui for ${{ matrix.app.package }}
+              if: ${{ matrix.app.package == '@techgarden/sprout-ui' }}
               run: |
-                  npx turbo run build --filter=${{ matrix.app.package }}
+                  npx -p turbo turbo prune ${{ matrix.app.package }} --docker
+                  cd ./out/json
+                  npm ci
+                  cd ../
+                  cp -r ./json/* ./full
+                  cd ./full
+                  npx turbo run build
             - name: Set up Docker Buildx for ${{ matrix.app.package }}
               uses: docker/setup-buildx-action@v3
             - name: Login to GitHub Container Registry

@@ -1,0 +1,4 @@
+{
+  "root": true,
+  "extends": "@techgarden/eslint-config/angular.js"
+}

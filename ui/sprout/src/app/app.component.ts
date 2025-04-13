@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { RootComponent } from '@techgarden/root-lib';
 
 @Component({
   selector: 'app-root',

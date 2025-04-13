@@ -12,6 +12,7 @@
         "build:ci": "turbo run build --output-logs=new-only"
     },
     "devDependencies": {
+        "@techgarden/eslint-config": "*",
         "prettier": "^3.5.3",
         "turbo": "^2.5.0",
         "typescript": "5.8.2"
@@ -21,8 +22,8 @@
     },
     "packageManager": "npm@11.0.0",
     "workspaces": [
-        "apps/ui/*",
-        "apps/service/*",
+        "ui/*",
+        "service/*",
         "packages/*"
     ]
 }

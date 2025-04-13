@@ -1,6 +1,9 @@
 {
-  "name": "@techgarden/root",
+  "name": "@techgarden/root-lib",
   "version": "0.0.0",
+  "private": true,
+  "main": "./dist/root/fesm2022/ui.mjs",
+  "types": "./dist/root/index.d.ts",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -11,7 +14,6 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
-  "private": true,
   "dependencies": {
     "@angular/cdk": "^19.2.9",
     "@angular/common": "^19.2.0",

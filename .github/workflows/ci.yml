@@ -42,7 +42,7 @@ jobs:
                   awk 'BEGIN {found=0} /\{/ {found=1} {if (found) print}' _logs/turbo.log > _logs/turbo.json
 
                   # Assuming the JSON data is saved in a file called 'output.json'
-                  missed_packages=$(jq -c '[.tasks[] | select(.cache.status == "MISS") | {package: .package, directory: .directory}]' _logs/turbo.json)
+                  missed_packages=$(jq -c '[.tasks[] | select(.cache.status == "MISS") | {package: .package, directory: .directory, name: (.package | sub("^@techgarden/"; ""))}]' _logs/turbo.json)
 
                   # Print the missed packages as a JSON array
                   echo "apps=$missed_packages" >> "$GITHUB_OUTPUT"
@@ -84,7 +84,7 @@ jobs:
               id: meta
               uses: docker/metadata-action@v5
               with:
-                  images: ${{ env.REGISTRY }}/${{ matrix.app.package }}
+                  images: ${{ env.REGISTRY }}/techgarden/${{ matrix.app.name }}
                   flavor: |
                       latest=auto
                       prefix=

@@ -1,0 +1,34 @@
+<div class="flex flex-col mx-auto h-full justify-center items-center">
+  <form
+    class="flex flex-col gap-4 border border-zinc-300 dark:border-zinc-700 rounded-md p-6 bg-zinc-200 dark:bg-zinc-800"
+    [formGroup]="loginForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <h1>Login</h1>
+    <input
+      rootInput
+      formControlName="username"
+      type="text"
+      placeholder="Username"
+      class="input"
+    />
+    <input
+      rootInput
+      formControlName="password"
+      type="password"
+      placeholder="Password"
+      class="input"
+    />
+    <div class="text-red-500 font-light" *ngIf="loginState.error">
+      {{ loginState.error }}
+    </div>
+    <label for="remember" class="text-sm">
+      <input type="checkbox" id="remember" formControlName="rememberMe" />
+      Remember me
+    </label>
+    <button rootButton type="submit" [disabled]="loginState.loading">
+      Login
+    </button>
+    <a class="self-center" routerLink="/auth/register">Register</a>
+  </form>
+</div>

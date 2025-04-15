@@ -3,7 +3,7 @@ import {
   ButtonModifier,
   ButtonShape,
   ButtonSize,
-  ButtonType,
+  ButtonVariant,
 } from '../../model/button.type';
 
 @Directive({
@@ -17,7 +17,7 @@ export class RootButton {
   size: ButtonSize = 'medium';
 
   @Input()
-  type: ButtonType = 'text';
+  variant: ButtonVariant = 'text';
 
   @Input()
   shape: ButtonShape = 'rounded';

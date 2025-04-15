@@ -1,7 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { environment } from '../environments/environment';
-import posthog from 'posthog-js';
 
 @Component({
   selector: 'app-root',
@@ -9,13 +7,6 @@ import posthog from 'posthog-js';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'sprout';
-
-  ngOnInit(): void {
-    posthog.init(environment.POSTHOG_KEY, {
-      api_host: environment.POSTHOG_HOST,
-      person_profiles: 'always',
-    });
-  }
 }

@@ -7,6 +7,6 @@ export type ButtonModifier =
 
 export type ButtonSize = 'small' | 'medium' | 'large';
 
-export type ButtonType = 'text' | 'icon';
+export type ButtonVariant = 'text' | 'icon';
 
 export type ButtonShape = 'square' | 'rounded' | 'circle';

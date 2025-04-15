@@ -1,0 +1,30 @@
+<div class="flex flex-col mx-auto h-full justify-center items-center">
+  <form
+    class="flex flex-col gap-4 border border-zinc-300 dark:border-zinc-700 rounded-md p-6 bg-zinc-200 dark:bg-zinc-800"
+    [formGroup]="registerForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <h1>Login</h1>
+    <input
+      rootInput
+      formControlName="username"
+      type="text"
+      placeholder="Username"
+      class="input"
+    />
+    <input
+      rootInput
+      formControlName="password"
+      type="password"
+      placeholder="Password"
+      class="input"
+    />
+    <div class="text-red-500 font-light" *ngIf="registerState.error">
+      {{ registerState.error }}
+    </div>
+    <button rootButton type="submit" [disabled]="registerState.loading">
+      Register
+    </button>
+    <a class="self-center" routerLink="/auth/login">Login</a>
+  </form>
+</div>

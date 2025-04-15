@@ -7,7 +7,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "start:dev": "npx @tailwindcss/cli -i ./projects/root-lib/src/styles/styles.css -o ./projects/root-lib/styles/styles.css --watch",
+    "start:dev": "npm run watch:css",
+    "watch:css": "npx @tailwindcss/cli -i ./projects/root-lib/src/styles/styles.css -o ./projects/root-lib/styles/styles.css --watch",
     "build": "npm run build:css && npm run build:lib",
     "build:css": "npx @tailwindcss/cli -i ./projects/root-lib/src/styles/styles.css -o ./projects/root-lib/styles/styles.css",
     "build:lib": "ng build",

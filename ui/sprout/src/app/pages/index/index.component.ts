@@ -284,7 +284,6 @@ export class IndexComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.initSubs();
     this.getFolderGroups();
-    // this.openFolder(this.quickLinks[0]);
   }
 
   initSubs() {

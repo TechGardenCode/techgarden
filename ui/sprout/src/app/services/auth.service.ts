@@ -12,7 +12,13 @@ export class AuthService {
   constructor(private readonly http: HttpClient) {
     const jwt = localStorage.getItem('jwt');
     if (jwt) {
-      this.jwt = jwt;
+      const payload = JSON.parse(atob(jwt.split('.')[1]));
+      const isExpired = payload.exp * 1000 < Date.now();
+      if (!isExpired) {
+        this.jwt = jwt;
+      } else {
+        localStorage.removeItem('jwt');
+      }
     }
   }
 

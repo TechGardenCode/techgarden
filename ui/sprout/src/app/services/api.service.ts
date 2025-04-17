@@ -27,7 +27,7 @@ export class ApiService {
   folderSubject = new BehaviorSubject(this.folder);
   folder$ = this.folderSubject.asObservable();
 
-  noteContent: ApiState<string> = {
+  noteContent: ApiState<{ content: string; id: string }> = {
     data: undefined,
     loading: false,
     error: undefined,
@@ -103,7 +103,7 @@ export class ApiService {
       .pipe(
         tap({
           next: (response) => {
-            this.noteContent.data = response as string;
+            this.noteContent.data = { content: response, id: noteId };
             this.noteContent.loading = false;
             this.noteContent.error = undefined;
             this.noteContentSubject.next(this.noteContent);

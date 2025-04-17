@@ -31,6 +31,7 @@ import { HttpClient } from '@angular/common/http';
 import { delay, of, OperatorFunction, tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { ApiState } from '../../model/api-state.type';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-index',
@@ -65,8 +66,16 @@ import { ApiState } from '../../model/api-state.type';
   templateUrl: './index.component.html',
   styleUrl: './index.component.css',
 })
-export class IndexComponent implements OnInit, AfterViewInit {
-  isSidebarVisible = true;
+export class IndexComponent implements OnInit {
+  sidebarState = {
+    folders: {
+      isVisible: false,
+    },
+    notes: {
+      isVisible: false,
+    },
+  };
+  isSidebarVisible = false;
   visibleEditorActions = 4;
   activePageBreakpoint: RootBreakpoint = 'sm';
 
@@ -98,8 +107,8 @@ export class IndexComponent implements OnInit, AfterViewInit {
     firstLoad: true,
   };
 
-  noteContent: ApiState<string> = {
-    data: undefined,
+  noteContent: ApiState<any> = {
+    data: {},
     loading: false,
     error: undefined,
     firstLoad: true,
@@ -279,11 +288,13 @@ export class IndexComponent implements OnInit, AfterViewInit {
     private readonly http: HttpClient,
     private readonly rootLayoutService: RootLayoutService,
     private readonly apiService: ApiService,
+    private readonly authService: AuthService,
   ) {}
 
   ngOnInit() {
     this.initSubs();
     this.getFolderGroups();
+    this.onResize();
   }
 
   initSubs() {
@@ -332,11 +343,10 @@ export class IndexComponent implements OnInit, AfterViewInit {
   }
 
   getNoteContentByNoteId(noteId: string) {
-    this.apiService.getNoteContentByNoteId(noteId);
-  }
-
-  ngAfterViewInit() {
-    this.onResize();
+    if (this.noteContent.data?.id !== noteId) {
+      this.apiService.getNoteContentByNoteId(noteId);
+    }
+    this.sidebarState.notes.isVisible = false;
   }
 
   @HostListener('window:resize')
@@ -368,78 +378,18 @@ export class IndexComponent implements OnInit, AfterViewInit {
     }
   }
 
-  toggleSidebar() {
+  toggleSidebar(state?: 'folders' | 'notes') {
     this.isSidebarVisible = !this.isSidebarVisible;
-  }
-
-  loadState(state: any) {
-    state.loading = true;
-    state.data = undefined;
-    state.error = undefined;
-  }
-
-  openFolder(folder: any) {
-    if (this.folderState.data?.id === folder.id) {
-      return;
+    if (state) {
+      this.sidebarState[state].isVisible = !this.sidebarState[state].isVisible;
     }
-    if (this.folderState.firstLoad) {
-      this.folderState.firstLoad = false;
-    } else if (this.folderState.loading) {
-      return;
-    }
-    this.loadState(this.folderState);
-    this.noteState.firstLoad = true;
-    this.loadState(this.noteState);
-    of(folder)
-      .pipe(
-        this.demoDelay(250, 500),
-        tap(() => {
-          this.folderState.loading = false;
-          this.folderState.error = undefined;
-          this.folderState.data = { ...folder, notes: this.sampleNotes };
-          if (this.folderState.data.notes.length) {
-            this.openNote(this.folderState.data.notes[0]);
-          } else {
-            this.noteState.loading = false;
-            this.noteState.error = 'No notes found';
-            this.noteState.data = undefined;
-          }
-        }),
-      )
-      .subscribe();
-  }
-
-  openNote(note: any) {
-    if (this.noteState.data?.id === note.id) {
-      return;
-    }
-    if (this.noteState.firstLoad) {
-      this.noteState.firstLoad = false;
-    } else if (this.noteState.loading) {
-      return;
-    }
-    this.loadState(this.noteState);
-    this.http
-      .get(`/assets/notes/${((note.id + 1) % 2) + 1}.html`, {
-        responseType: 'text',
-      })
-      .pipe(
-        this.demoDelay(250, 500),
-        tap({
-          next: (content: string) => {
-            this.noteState.loading = false;
-            this.noteState.data = { ...note, content };
-          },
-          error: (error) => {
-            this.noteState.loading = false;
-            this.noteState.error = error;
-          },
-        }),
-      )
-      .subscribe();
   }
 
   demoDelay(min: number, range: number): OperatorFunction<any, any> {
     return delay(Math.random() * range + min);
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }

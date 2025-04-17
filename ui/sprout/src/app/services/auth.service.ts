@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,10 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   jwt?: string = undefined;
 
-  constructor(private readonly http: HttpClient) {
+  constructor(
+    private readonly http: HttpClient,
+    private readonly router: Router,
+  ) {
     const jwt = localStorage.getItem('jwt');
     if (jwt) {
       const payload = JSON.parse(atob(jwt.split('.')[1]));
@@ -52,5 +56,11 @@ export class AuthService {
           },
         }),
       );
+  }
+
+  logout() {
+    this.jwt = undefined;
+    localStorage.removeItem('jwt');
+    this.router.navigate(['/auth/login']);
   }
 }

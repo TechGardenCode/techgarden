@@ -13,7 +13,13 @@ import { tap } from 'rxjs';
 import { ApiState } from '../../../model/api-state.type';
 
 @Component({
-  imports: [CommonModule, RootInput, ReactiveFormsModule, RootButton, RouterModule],
+  imports: [
+    CommonModule,
+    RootInput,
+    ReactiveFormsModule,
+    RootButton,
+    RouterModule,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -44,9 +50,9 @@ export class LoginComponent implements OnInit {
       rememberMe: [false],
     });
 
-    const savedUsername = localStorage.getItem('username');
-    if (savedUsername) {
-      this.loginForm.patchValue({ username: savedUsername });
+    const username = localStorage.getItem('username');
+    if (username) {
+      this.loginForm.patchValue({ username, rememberMe: true });
     }
   }
 

@@ -51,48 +51,46 @@
         </div>
       </ng-container>
     </div>
-    <div class="-mx-4 px-8 grow overflow-y-auto">
-      <sprout-note-editor
-        [content]="noteContent.data?.content"
-        *ngIf="!noteContent.loading && !noteContent.firstLoad; else noteLoading"
-      ></sprout-note-editor>
-      <ng-template #noteLoading>
-        <div class="flex flex-col">
-          <root-shimmer
-            class="py-[9px]"
-            heightClass="h-[36px]"
-            widthClass="w-1/2"
-            backgroundColorClass="bg-zinc-300 dark:bg-zinc-700"
-          ></root-shimmer>
-          <root-shimmer
-            class="py-[4px] mt-2 mb-4"
-            backgroundColorClass="bg-zinc-300 dark:bg-zinc-700"
-            rows="5"
-          ></root-shimmer>
-          <root-shimmer
-            class="py-[7.5px]"
-            heightClass="h-[30px]"
-            widthClass="w-1/2"
-            backgroundColorClass="bg-zinc-300 dark:bg-zinc-700"
-          ></root-shimmer>
-          <root-shimmer
-            class="py-[4px] mt-2 mb-4"
-            backgroundColorClass="bg-zinc-300 dark:bg-zinc-700"
-            rows="5"
-          ></root-shimmer>
-          <root-shimmer
-            class="py-[7.5px]"
-            heightClass="h-[30px]"
-            widthClass="w-1/2"
-            backgroundColorClass="bg-zinc-300 dark:bg-zinc-700"
-          ></root-shimmer>
-          <root-shimmer
-            class="py-[4px] mt-2 mb-4"
-            backgroundColorClass="bg-zinc-300 dark:bg-zinc-700"
-            rows="5"
-          ></root-shimmer>
-        </div>
-      </ng-template>
-    </div>
+    <sprout-note-editor
+      [content]="noteContent.data?.content"
+      *ngIf="!noteContent.loading && !noteContent.firstLoad; else noteLoading"
+    ></sprout-note-editor>
+    <ng-template #noteLoading>
+      <div class="flex flex-col">
+        <root-shimmer
+          class="py-[9px]"
+          heightClass="h-[36px]"
+          widthClass="w-1/2"
+          backgroundColorClass="bg-zinc-300 dark:bg-zinc-700"
+        ></root-shimmer>
+        <root-shimmer
+          class="py-[4px] mt-2 mb-4"
+          backgroundColorClass="bg-zinc-300 dark:bg-zinc-700"
+          rows="5"
+        ></root-shimmer>
+        <root-shimmer
+          class="py-[7.5px]"
+          heightClass="h-[30px]"
+          widthClass="w-1/2"
+          backgroundColorClass="bg-zinc-300 dark:bg-zinc-700"
+        ></root-shimmer>
+        <root-shimmer
+          class="py-[4px] mt-2 mb-4"
+          backgroundColorClass="bg-zinc-300 dark:bg-zinc-700"
+          rows="5"
+        ></root-shimmer>
+        <root-shimmer
+          class="py-[7.5px]"
+          heightClass="h-[30px]"
+          widthClass="w-1/2"
+          backgroundColorClass="bg-zinc-300 dark:bg-zinc-700"
+        ></root-shimmer>
+        <root-shimmer
+          class="py-[4px] mt-2 mb-4"
+          backgroundColorClass="bg-zinc-300 dark:bg-zinc-700"
+          rows="5"
+        ></root-shimmer>
+      </div>
+    </ng-template>
   </div>
 </div>

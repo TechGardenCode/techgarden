@@ -199,9 +199,6 @@
   .relative {
     position: relative;
   }
-  .block {
-    display: block;
-  }
   .flex {
     display: flex;
   }
@@ -261,15 +258,6 @@
   }
   .rounded {
     border-radius: 0.25rem;
-  }
-  .rounded-\[10px\] {
-    border-radius: 10px;
-  }
-  .rounded-\[20\] {
-    border-radius: 20;
-  }
-  .rounded-\[20px\] {
-    border-radius: 20px;
   }
   .rounded-full {
     border-radius: calc(infinity * 1px);
@@ -395,15 +383,6 @@
     transition-property: all;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
-  }
-  .transition-transform {
-    transition-property: transform, translate, scale, rotate;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-  }
-  .outline-none {
-    --tw-outline-style: none;
-    outline-style: none;
   }
   .hover\:bg-black\/90 {
     &:hover {

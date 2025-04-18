@@ -1,7 +1,2 @@
-<div
-  class="block outline-0 pb-8"
-  contenteditable="true"
-  (keydown)="onKeydown($event)"
-  [innerHTML]="content | safeHtml"
-  #editor
-></div>
+<!-- <quill-editor class="flex flex-col grow max-h-full"></quill-editor> -->
+<textarea class="-mx-4 px-8 grow outline-hidden" [ngModel]="content" (ngModelChange)="contentChange.emit($event)"></textarea>

@@ -1,10 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { NoteEditorComponent } from '../../components/note-editor/note-editor.component';
 import {
-  RootAvatar,
   RootButton,
-  RootIconField,
-  RootInput,
   RootLayoutService,
   RootShimmer,
   RootBreakpoint,
@@ -27,8 +24,7 @@ import {
   heroShare,
   heroTag,
 } from '@ng-icons/heroicons/outline';
-import { HttpClient } from '@angular/common/http';
-import { delay, of, OperatorFunction, tap } from 'rxjs';
+import { delay, OperatorFunction } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { ApiState } from '../../model/api-state.type';
 import { AuthService } from '../../services/auth.service';
@@ -41,8 +37,6 @@ import { NoteListComponent } from './note-list/note-list.component';
     CommonModule,
     NoteEditorComponent,
     RootButton,
-    RootInput,
-    RootIconField,
     NgIcon,
     RootShimmer,
     WorkspaceComponent,
@@ -78,16 +72,9 @@ export class IndexComponent implements OnInit {
       isVisible: false,
     },
   };
-  isSidebarVisible = false;
+
   visibleEditorActions = 4;
   activePageBreakpoint: RootBreakpoint = 'sm';
-
-  noteState: any = {
-    data: undefined,
-    loading: false,
-    error: undefined,
-    firstLoad: true,
-  };
 
   folderState: any = {
     data: undefined,
@@ -109,145 +96,6 @@ export class IndexComponent implements OnInit {
     error: undefined,
     firstLoad: true,
   };
-
-  quickLinks = [
-    {
-      id: 'random-id-1',
-      icon: true,
-      title: 'All notes',
-      count: undefined,
-    },
-    {
-      id: 'random-id-2',
-      icon: true,
-      title: 'Reminders',
-      count: undefined,
-    },
-    {
-      id: 'random-id-3',
-      icon: true,
-      title: 'Tasks',
-      count: undefined,
-    },
-    {
-      id: 'random-id-4',
-      icon: true,
-      title: 'Favorites',
-      count: undefined,
-    },
-    {
-      id: 'random-id-5',
-      icon: true,
-      title: 'Highlights',
-      count: undefined,
-    },
-    {
-      id: 'random-id-6',
-      icon: true,
-      title: 'Activity',
-      count: undefined,
-    },
-    {
-      id: 'random-id-7',
-      icon: true,
-      title: 'Saved search',
-      count: undefined,
-    },
-    {
-      id: 'random-id-8',
-      icon: false,
-      title: 'Test search',
-      count: 12,
-    },
-    {
-      id: 'random-id-9',
-      icon: false,
-      title: 'My notes',
-      count: 2,
-    },
-  ];
-
-  folders = [
-    {
-      id: 'random-id-10',
-      icon: true,
-      title: 'School',
-      count: 102,
-      color: 'text-zinc-800 dark:text-zinc-200',
-    },
-    {
-      id: 'random-id-11',
-      icon: true,
-      title: 'Work',
-      count: 12,
-      color: 'text-green-800 dark:text-green-200',
-    },
-    {
-      id: 'random-id-12',
-      icon: true,
-      title: 'Personal',
-      count: 2,
-      color: 'text-blue-800 dark:text-blue-200',
-    },
-    {
-      id: 'random-id-13',
-      icon: true,
-      title: 'Test folder',
-      count: 0,
-      color: 'text-yellow-800 dark:text-yellow-200',
-    },
-    {
-      id: 'random-id-14',
-      icon: true,
-      title: 'My folder',
-      count: 0,
-      color: 'text-purple-800 dark:text-purple-200',
-    },
-  ];
-
-  tags = [
-    {
-      id: 'random-id-15',
-      icon: true,
-      title: 'Design',
-      count: 25,
-      color: 'text-orange-800 dark:text-orange-200',
-    },
-    {
-      id: 'random-id-16',
-      icon: true,
-      title: 'Screenshots',
-      count: 33,
-      color: 'text-red-800 dark:text-red-200',
-    },
-  ];
-
-  sampleNotes = [
-    {
-      id: 1,
-      title: 'Hive city',
-      date: '2023-10-01',
-      content:
-        'A hive city is a theoretical type of arcology or vertical city that closely resembles a beehive in its density and organization.',
-      tags: ['tag1', 'tag2'],
-    },
-    {
-      id: 2,
-      title: 'A Room with a View',
-      date: '2023-10-02',
-      content:
-        'A Room with a View is a 1908 novel by English writer E. M. Forster, about a young woman in the restrained culture of Edwardian-era England',
-      tags: ['tag3', 'tag4'],
-    },
-    {
-      id: 3,
-      title: 'Hive city',
-      date: '2023-10-03',
-      content:
-        'A hive city is a theoretical type of arcology or vertical city that closely resembles a beehive in its density and organization.',
-      tags: ['tag5', 'tag6'],
-    },
-  ];
 
   editorActions = [
     {
@@ -355,7 +203,6 @@ export class IndexComponent implements OnInit {
   }
 
   toggleSidebar(state?: 'folders' | 'notes') {
-    this.isSidebarVisible = !this.isSidebarVisible;
     if (state) {
       const keys: ('folders' | 'notes')[] = ['folders', 'notes'];
       keys.forEach((key) => {

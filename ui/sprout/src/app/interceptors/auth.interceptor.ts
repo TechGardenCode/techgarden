@@ -2,11 +2,9 @@ import { HttpInterceptorFn, HttpStatusCode } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { switchMap, tap } from 'rxjs';
-import { Router } from '@angular/router';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  const router = inject(Router);
 
   const accessToken = authService.accessToken;
 
@@ -35,7 +33,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             );
           }
         }
-        return router.navigate(['/auth/login']);
+        return false;
       },
     }),
   );

@@ -1,19 +1,19 @@
 import { HttpInterceptorFn, HttpStatusCode } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { delay, tap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  const token = authService.jwt;
+  const accessToken = authService.accessToken;
 
-  const authReq = token
+  const authReq = accessToken
     ? req.clone({
         setHeaders: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       })
     : req;
@@ -22,9 +22,20 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     tap({
       error: (err) => {
         if (err.status === HttpStatusCode.Unauthorized) {
-          return router.navigate(['/auth/login'], {});
+          if (authService.refreshToken) {
+            return authService.refresh().pipe(
+              switchMap(({ accessToken }) => {
+                const clonedReq = req.clone({
+                  setHeaders: {
+                    Authorization: `Bearer ${accessToken}`,
+                  },
+                });
+                return next(clonedReq);
+              }),
+            );
+          }
         }
-        return;
+        return router.navigate(['/auth/login']);
       },
     }),
   );

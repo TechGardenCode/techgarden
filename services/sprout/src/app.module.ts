@@ -5,8 +5,10 @@ import { FoldersModule } from './folders/folders.module';
 import { NotesModule } from './notes/notes.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -17,8 +19,12 @@ import { ConfigModule } from '@nestjs/config';
     }),
     FoldersModule,
     NotesModule,
-    DatabaseModule,
     ConfigModule.forRoot(),
+    MongooseModule.forRoot(
+      `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_URL}`,
+    ),
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

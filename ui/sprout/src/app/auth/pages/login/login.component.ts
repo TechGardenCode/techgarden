@@ -40,8 +40,10 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.authService.jwt) {
+    if (this.authService.accessToken) {
       this.router.navigate(['/']);
+    } else {
+      this.authService.refresh().subscribe();
     }
 
     this.loginForm = this.fb.group({

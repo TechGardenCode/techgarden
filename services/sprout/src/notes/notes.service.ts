@@ -45,8 +45,7 @@ export class NotesService {
     const filePath = `http://localhost:3000/assets/notes/${noteId}.html`;
     const { data } = await firstValueFrom(
       this.httpService.get<string>(filePath).pipe(
-        catchError((error) => {
-          console.log(error);
+        catchError(() => {
           throw new Error('An error occurred');
         }),
       ),

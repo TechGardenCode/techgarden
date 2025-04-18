@@ -9,10 +9,15 @@ export class AuthenticatedGuard implements CanActivate {
     private readonly router: Router,
   ) {}
   canActivate(): MaybeAsync<GuardResult> {
-    if (this.authService.jwt) {
+    if (this.authService.accessToken) {
       return true;
     } else {
-      return this.router.createUrlTree(['/auth/login']);
+      if (this.authService.refreshToken) {
+        this.authService.refresh().subscribe();
+        return true;
+      } else {
+        return this.router.createUrlTree(['/auth/login']);
+      }
     }
   }
 }

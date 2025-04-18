@@ -35,8 +35,10 @@ export class RegisterComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.authService.jwt) {
+    if (this.authService.accessToken) {
       this.router.navigate(['/']);
+    } else {
+      this.authService.refresh().subscribe();
     }
 
     this.registerForm = this.fb.group({

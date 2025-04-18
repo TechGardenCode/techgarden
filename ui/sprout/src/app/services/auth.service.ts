@@ -8,35 +8,40 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class AuthService {
-  jwt?: string = undefined;
+  accessToken?: string = undefined;
+  refreshToken?: string = undefined;
 
   constructor(
     private readonly http: HttpClient,
     private readonly router: Router,
   ) {
-    const jwt = localStorage.getItem('jwt');
-    if (jwt) {
-      const payload = JSON.parse(atob(jwt.split('.')[1]));
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (refreshToken) {
+      const payload = JSON.parse(atob(refreshToken.split('.')[1]));
       const isExpired = payload.exp * 1000 < Date.now();
       if (!isExpired) {
-        this.jwt = jwt;
+        this.refreshToken = refreshToken;
       } else {
-        localStorage.removeItem('jwt');
+        localStorage.removeItem('refreshToken');
       }
     }
   }
 
   login(username: string, password: string) {
     return this.http
-      .post<{ access_token: string }>(`${environment.apiUrl}/auth/login`, {
-        username,
-        password,
-      })
+      .post<{ accessToken: string; refreshToken: string }>(
+        `${environment.apiUrl}/auth/signin`,
+        {
+          username,
+          password,
+        },
+      )
       .pipe(
         tap({
-          next: ({ access_token }) => {
-            this.jwt = access_token;
-            localStorage.setItem('jwt', access_token);
+          next: ({ accessToken, refreshToken }) => {
+            this.accessToken = accessToken;
+            this.refreshToken = refreshToken;
+            localStorage.setItem('refreshToken', refreshToken);
           },
         }),
       );
@@ -44,23 +49,54 @@ export class AuthService {
 
   register(username: string, password: string) {
     return this.http
-      .post<{ access_token: string }>(`${environment.apiUrl}/auth/register`, {
-        username,
-        password,
+      .post<{ accessToken: string; refreshToken: string }>(
+        `${environment.apiUrl}/auth/signup`,
+        {
+          username,
+          password,
+        },
+      )
+      .pipe(
+        tap({
+          next: ({ accessToken, refreshToken }) => {
+            this.accessToken = accessToken;
+            this.refreshToken = refreshToken;
+            localStorage.setItem('refreshToken', refreshToken);
+          },
+        }),
+      );
+  }
+
+  refresh() {
+    const refreshToken = this.refreshToken;
+    this.refreshToken = undefined;
+    localStorage.removeItem('refreshToken');
+
+    return this.http
+      .get<{
+        accessToken: string;
+        refreshToken: string;
+      }>(`${environment.apiUrl}/auth/refresh`, {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
       })
       .pipe(
         tap({
-          next: ({ access_token }) => {
-            this.jwt = access_token;
-            localStorage.setItem('jwt', access_token);
+          next: ({ accessToken, refreshToken }) => {
+            this.accessToken = accessToken;
+            this.refreshToken = refreshToken;
+            localStorage.setItem('refreshToken', refreshToken);
+            this.router.navigate(['/']);
           },
         }),
       );
   }
 
   logout() {
-    this.jwt = undefined;
-    localStorage.removeItem('jwt');
+    this.accessToken = undefined;
+    this.refreshToken = undefined;
+    localStorage.removeItem('refreshToken');
     this.router.navigate(['/auth/login']);
   }
 }

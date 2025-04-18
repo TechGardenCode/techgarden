@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, of, tap } from 'rxjs';
 import { ApiState } from '../model/api-state.type';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
@@ -39,61 +39,62 @@ export class ApiService {
   constructor(private readonly http: HttpClient) {}
 
   getFolders() {
-    this.folders.loading = true;
-    this.folders.error = undefined;
-    this.folders.firstLoad = false;
+    this.apiLoading(this.folders);
     this.foldersSubject.next(this.folders);
+    this.apiLoading(this.folder);
+    this.folderSubject.next(this.folder);
+    this.apiLoading(this.noteContent);
+    this.noteContentSubject.next(this.noteContent);
 
-    return this.http
-      .get(`${environment.apiUrl}/folders`)
-      .pipe(
-        tap({
-          next: (response) => {
-            this.folders.data = response as any[];
-            this.folders.loading = false;
-            this.folders.error = undefined;
-            this.foldersSubject.next(this.folders);
-          },
-          error: (error) => {
-            this.folders.loading = false;
-            this.folders.error = error;
-            this.foldersSubject.next(this.folders);
-          },
-        }),
-      )
-      .subscribe();
+    return this.http.get(`${environment.apiUrl}/folders`).pipe(
+      tap({
+        next: (response) => {
+          this.folders.data = response as any[];
+          this.folders.loading = false;
+          this.folders.error = undefined;
+          this.foldersSubject.next(this.folders);
+        },
+        error: (error) => {
+          this.folders.loading = false;
+          this.folders.error = error;
+          this.foldersSubject.next(this.folders);
+        },
+      }),
+    );
   }
 
   getFolderById(id: string) {
-    this.folder.loading = true;
-    this.folder.error = undefined;
-    this.folder.firstLoad = false;
-    this.folderSubject.next(this.folder);
+    if (this.folder.data?.id === id) {
+      return of();
+    }
 
-    return this.http
-      .get(`${environment.apiUrl}/folders/${id}`)
-      .pipe(
-        tap({
-          next: (response) => {
-            this.folder.data = response as any;
-            this.folder.loading = false;
-            this.folder.error = undefined;
-            this.folderSubject.next(this.folder);
-          },
-          error: (error) => {
-            this.folder.loading = false;
-            this.folder.error = error;
-            this.folderSubject.next(this.folder);
-          },
-        }),
-      )
-      .subscribe();
+    this.apiLoading(this.folder);
+    this.folderSubject.next(this.folder);
+    this.apiLoading(this.noteContent);
+    this.noteContentSubject.next(this.noteContent);
+
+    return this.http.get(`${environment.apiUrl}/folders/${id}`).pipe(
+      tap({
+        next: (response) => {
+          this.folder.data = response as any;
+          this.folder.loading = false;
+          this.folder.error = undefined;
+          this.folderSubject.next(this.folder);
+        },
+        error: (error) => {
+          this.folder.loading = false;
+          this.folder.error = error;
+          this.folderSubject.next(this.folder);
+        },
+      }),
+    );
   }
 
   getNoteContentByNoteId(noteId: string) {
-    this.noteContent.loading = true;
-    this.noteContent.error = undefined;
-    this.noteContent.firstLoad = false;
+    if (this.noteContent.data?.id === noteId) {
+      return of();
+    }
+    this.apiLoading(this.noteContent);
     this.noteContentSubject.next(this.noteContent);
 
     return this.http
@@ -114,7 +115,12 @@ export class ApiService {
             this.noteContentSubject.next(this.noteContent);
           },
         }),
-      )
-      .subscribe();
+      );
+  }
+
+  apiLoading(apiState: ApiState<unknown>) {
+    apiState.loading = true;
+    apiState.firstLoad = false;
+    apiState.data = undefined;
   }
 }

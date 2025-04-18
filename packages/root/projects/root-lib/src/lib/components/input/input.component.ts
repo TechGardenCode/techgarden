@@ -9,8 +9,7 @@ export class RootInput {
     return [
       'rounded-full',
       'py-2',
-      'px-4',
-      'outline-none',
+      'px-5',
       'bg-zinc-300',
       'dark:bg-zinc-700',
       'text-zinc-700',

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { NoteEditorComponent } from '../../components/note-editor/note-editor.component';
 import {
   RootAvatar,
@@ -32,6 +32,8 @@ import { delay, of, OperatorFunction, tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { ApiState } from '../../model/api-state.type';
 import { AuthService } from '../../services/auth.service';
+import { WorkspaceComponent } from './workspace/workspace.component';
+import { NoteListComponent } from './note-list/note-list.component';
 
 @Component({
   selector: 'app-index',
@@ -41,9 +43,10 @@ import { AuthService } from '../../services/auth.service';
     RootButton,
     RootInput,
     RootIconField,
-    RootAvatar,
     NgIcon,
     RootShimmer,
+    WorkspaceComponent,
+    NoteListComponent,
   ],
   providers: [
     provideIcons({
@@ -87,13 +90,6 @@ export class IndexComponent implements OnInit {
   };
 
   folderState: any = {
-    data: undefined,
-    loading: false,
-    error: undefined,
-    firstLoad: true,
-  };
-
-  folderGroups: ApiState<any[]> = {
     data: undefined,
     loading: false,
     error: undefined,
@@ -285,7 +281,6 @@ export class IndexComponent implements OnInit {
   ];
 
   constructor(
-    private readonly http: HttpClient,
     private readonly rootLayoutService: RootLayoutService,
     private readonly apiService: ApiService,
     private readonly authService: AuthService,
@@ -298,22 +293,6 @@ export class IndexComponent implements OnInit {
   }
 
   initSubs() {
-    this.apiService.folders$.subscribe((folders) => {
-      this.folderGroups = folders;
-      if (this.folderGroups.loading || this.folderGroups.firstLoad) {
-        return;
-      }
-      const firstFolderGroup = folders.data?.[0];
-      if (!firstFolderGroup) {
-        return;
-      }
-      const firstFolder = firstFolderGroup.folders?.[0];
-      if (!firstFolder) {
-        return;
-      }
-      this.getFolderById(firstFolder.id);
-    });
-
     this.apiService.folder$.subscribe((folder) => {
       this.openedFolder = folder;
       if (this.openedFolder.loading || this.openedFolder.firstLoad) {
@@ -335,18 +314,15 @@ export class IndexComponent implements OnInit {
   }
 
   getFolderGroups() {
-    this.apiService.getFolders();
+    this.apiService.getFolders().subscribe();
   }
 
   getFolderById(id: string) {
-    this.apiService.getFolderById(id);
+    this.apiService.getFolderById(id).subscribe();
   }
 
   getNoteContentByNoteId(noteId: string) {
-    if (this.noteContent.data?.id !== noteId) {
-      this.apiService.getNoteContentByNoteId(noteId);
-    }
-    this.sidebarState.notes.isVisible = false;
+    this.apiService.getNoteContentByNoteId(noteId).subscribe();
   }
 
   @HostListener('window:resize')
@@ -381,6 +357,12 @@ export class IndexComponent implements OnInit {
   toggleSidebar(state?: 'folders' | 'notes') {
     this.isSidebarVisible = !this.isSidebarVisible;
     if (state) {
+      const keys: ('folders' | 'notes')[] = ['folders', 'notes'];
+      keys.forEach((key) => {
+        if (key !== state) {
+          this.sidebarState[key].isVisible = false;
+        }
+      });
       this.sidebarState[state].isVisible = !this.sidebarState[state].isVisible;
     }
   }

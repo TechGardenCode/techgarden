@@ -1,0 +1,53 @@
+root-form-field {
+  &:has(> root-form-field) {
+    > root-form-field {
+      position: relative;
+
+      > label[rootInputLabel] {
+        position: absolute;
+        top: 50%;
+        left: 1.25rem;
+        transform: translateY(-50%);
+        user-select: none;
+
+        &:has(+ input[rootInput]:not(:placeholder-shown)) {
+          top: 0rem;
+          transform: translateY(0);
+          font-size: 0.75rem;
+          transition-property: transform, translate, scale, rotate;
+          transition-timing-function: var(
+            --default-transition-timing-function
+          ); /* cubic-bezier(0.4, 0, 0.2, 1) */
+          transition-duration: var(--default-transition-duration); /* 150ms */
+        }
+      }
+
+      > input[rootInput] {
+        &::placeholder {
+          opacity: 0;
+        }
+
+        &:not(:placeholder-shown) {
+          padding-top: 1rem;
+          padding-bottom: 0;
+        }
+      }
+
+      &:focus-within {
+        > label[rootInputLabel] {
+          top: 0rem;
+          transform: translateY(0);
+          font-size: 0.75rem;
+        }
+
+        > input[rootInput] {
+          &::placeholder {
+            opacity: 1;
+          }
+          padding-top: 1rem;
+          padding-bottom: 0;
+        }
+      }
+    }
+  }
+}

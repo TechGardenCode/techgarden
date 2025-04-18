@@ -1,0 +1,29 @@
+<div class="flex flex-col gap-4 items-start p-4">
+  <input id="rootInput1" rootInput type="text" placeholder="Search" />
+
+  <root-form-field>
+    <label rootInputLabel for="rootInput2">Label</label>
+    <input id="rootInput2" rootInput type="text" placeholder="Search" />
+    <label rootInputHint for="rootInput2">Hint</label>
+  </root-form-field>
+
+  <root-form-field>
+    <label rootInputLabel for="rootInput3">Outer Label</label>
+    <root-form-field>
+      <label rootInputLabel for="rootInput3">Label</label>
+      <input id="rootInput3" rootInput type="text" placeholder="Search" />
+    </root-form-field>
+    <label rootInputHint for="rootInput3">Outer Hint</label>
+  </root-form-field>
+
+  <fieldset class="border border-white p-4">
+    <legend class="-mx-2 px-2">Fieldset</legend>
+    <root-form-field>
+      <label rootInputLabel for="rootInput4">Label</label>
+      <input id="rootInput4" rootInput type="text" placeholder="Search" />
+      <label rootInputHint for="rootInput4">Hint</label>
+    </root-form-field>
+  </fieldset>
+
+  <input />
+</div>

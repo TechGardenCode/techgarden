@@ -1,10 +1,7 @@
-import {
-  HttpInterceptorFn,
-  HttpStatusCode,
-} from '@angular/common/http';
+import { HttpInterceptorFn, HttpStatusCode } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { tap } from 'rxjs';
+import { delay, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {

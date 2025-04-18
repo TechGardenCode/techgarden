@@ -1,0 +1,76 @@
+<div class="h-10 flex gap-2 items-center">
+  <div class="flex items-center gap-2 mr-auto">
+    <button rootButton shape="circle" modifier="ghost" (click)="logout()">
+      <root-avatar value="Kian Alikhani"></root-avatar>
+    </button>
+    <div>Workspace</div>
+  </div>
+  <button
+    class="inline-flex shrink-0"
+    rootButton
+    shape="circle"
+    modifier="ghost"
+    (click)="getFolderGroups()"
+  >
+    <ng-icon name="heroArrowPath"></ng-icon>
+  </button>
+</div>
+<div class="flex flex-col md:pl-8 gap-8">
+  <ng-container
+    *ngIf="
+      !folderGroups.loading && !folderGroups.firstLoad;
+      else folderGroupsLoading
+    "
+  >
+    <div class="flex flex-col" *ngFor="let folder of folderGroups.data">
+      <div class="mb-2">{{ folder.title }}</div>
+      <a
+        tabindex="0"
+        class="select-none cursor-pointer hover:bg-black/5 active:bg-black/10 hover:dark:bg-white/5 active:dark:bg-white/10 -ml-8 pl-8 rounded-md py-2 flex items-center gap-2 text-sm text-zinc-800 dark:text-zinc-200"
+        *ngFor="let folder of folder.folders"
+        (click)="getFolderById(folder.id)"
+        (keydown.enter)="getFolderById(folder.id)"
+      >
+        <div class="w-6">
+          <svg
+            *ngIf="folder.icon"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            class="size-5"
+            [ngClass]="folder.color"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"
+            />
+          </svg>
+        </div>
+        <div>
+          {{ folder.title }}
+          <span class="text-zinc-600 dark:text-zinc-400">{{
+            folder.count
+          }}</span>
+        </div>
+      </a>
+    </div>
+  </ng-container>
+  <ng-template #folderGroupsLoading>
+    <div class="flex flex-col gap-4" *ngFor="let i of [].constructor(3)">
+      <div class="flex gap-4 items-center py-1">
+        <root-shimmer class="w-full" widthClass="w-1/2"></root-shimmer>
+      </div>
+      <div class="flex gap-4" *ngFor="let i of [].constructor(4)">
+        <root-shimmer
+          class="mt-0.5"
+          widthClass="w-4"
+          borderRadiusClass="rounded-full"
+        ></root-shimmer>
+        <root-shimmer class="w-1/3 py-0.5"></root-shimmer>
+      </div>
+    </div>
+  </ng-template>
+</div>

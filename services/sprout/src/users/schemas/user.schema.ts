@@ -15,7 +15,7 @@ export class User {
   password: string;
 
   @Prop()
-  refreshToken: string;
+  refreshToken?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -19,7 +19,6 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
   async signUp(user: User): Promise<any> {
-    // Check if user exists
     const userExists = await this.usersService.findByUsername(user.username);
     if (userExists) {
       throw new BadRequestException('User already exists');

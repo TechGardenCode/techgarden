@@ -12,10 +12,6 @@ export class UsersService {
     return createdUser.save();
   }
 
-  async findAll(): Promise<UserDocument[]> {
-    return this.userModel.find().exec();
-  }
-
   async findById(id: Types.ObjectId) {
     return this.userModel.findById(id).exec();
   }

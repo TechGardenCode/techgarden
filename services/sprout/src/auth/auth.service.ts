@@ -1,10 +1,15 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
-import { CreateUserModel } from 'src/users/model/create-user.model';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthModel } from './model/auth.model';
+import { User } from 'src/users/schemas/user.schema';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -13,19 +18,17 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
-  async signUp(createUserModel: CreateUserModel): Promise<any> {
+  async signUp(user: User): Promise<any> {
     // Check if user exists
-    const userExists = await this.usersService.findByUsername(
-      createUserModel.username,
-    );
+    const userExists = await this.usersService.findByUsername(user.username);
     if (userExists) {
       throw new BadRequestException('User already exists');
     }
 
     // Hash password
-    const hash = await this.hashData(createUserModel.password);
+    const hash = await this.hashData(user.password);
     const newUser = await this.usersService.create({
-      ...createUserModel,
+      ...user,
       password: hash,
     });
     const tokens = await this.getTokens(newUser._id, newUser.username);
@@ -45,7 +48,7 @@ export class AuthService {
     return tokens;
   }
 
-  async logout(userId: string) {
+  async logout(userId: Types.ObjectId) {
     return this.usersService.update(userId, { refreshToken: undefined });
   }
 
@@ -53,14 +56,14 @@ export class AuthService {
     return argon2.hash(data);
   }
 
-  async updateRefreshToken(userId: string, refreshToken: string) {
+  async updateRefreshToken(userId: Types.ObjectId, refreshToken: string) {
     const hashedRefreshToken = await this.hashData(refreshToken);
     await this.usersService.update(userId, {
       refreshToken: hashedRefreshToken,
     });
   }
 
-  async refreshTokens(userId: string, refreshToken: string) {
+  async refreshTokens(userId: Types.ObjectId, refreshToken: string) {
     const user = await this.usersService.findById(userId);
     if (!user || !user.refreshToken)
       throw new ForbiddenException('Access Denied');
@@ -74,7 +77,7 @@ export class AuthService {
     return tokens;
   }
 
-  async getTokens(userId: string, username: string) {
+  async getTokens(userId: Types.ObjectId, username: string) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {

@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { FoldersModule } from './folders/folders.module';
-import { NotesModule } from './notes/notes.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
@@ -17,8 +15,6 @@ import { AuthModule } from './auth/auth.module';
       rootPath: join(__dirname, 'assets', 'notes'),
       serveRoot: '/assets/notes',
     }),
-    FoldersModule,
-    NotesModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot(
       `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_URL}`,

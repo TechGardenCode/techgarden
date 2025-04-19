@@ -9,17 +9,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserModel } from './model/create-user.model';
-import { UpdateUserModel } from './model/update-user.model.ts';
 import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
+import { User } from './schemas/user.schema';
+import { Types } from 'mongoose';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserModel: CreateUserModel) {
-    return this.usersService.create(createUserModel);
+  create(@Body() user: User) {
+    return this.usersService.create(user);
   }
 
   @Get()
@@ -28,19 +28,19 @@ export class UsersController {
   }
 
   @Get(':id')
-  findById(@Param('id') id: string) {
+  findById(@Param('id') id: Types.ObjectId) {
     return this.usersService.findById(id);
   }
 
   @UseGuards(AccessTokenGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserModel: UpdateUserModel) {
-    return this.usersService.update(id, updateUserModel);
+  update(@Param('id') id: Types.ObjectId, @Body() user: User) {
+    return this.usersService.update(id, user);
   }
 
   @UseGuards(AccessTokenGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: Types.ObjectId) {
     return this.usersService.remove(id);
   }
 }

@@ -1,16 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { CreateUserModel } from './model/create-user.model';
-import { UpdateUserModel } from './model/update-user.model.ts';
+import { Model, Types } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async create(createUserModel: CreateUserModel) {
-    const createdUser = new this.userModel(createUserModel);
+  async create(user: User) {
+    const createdUser = new this.userModel(user);
     return createdUser.save();
   }
 
@@ -18,7 +16,7 @@ export class UsersService {
     return this.userModel.find().exec();
   }
 
-  async findById(id: string) {
+  async findById(id: Types.ObjectId) {
     return this.userModel.findById(id).exec();
   }
 
@@ -26,13 +24,11 @@ export class UsersService {
     return this.userModel.findOne({ username }).exec();
   }
 
-  async update(id: string, updateUserModel: UpdateUserModel) {
-    return this.userModel
-      .findByIdAndUpdate(id, updateUserModel, { new: true })
-      .exec();
+  async update(id: Types.ObjectId, user: Partial<User>) {
+    return this.userModel.findByIdAndUpdate(id, user, { new: true }).exec();
   }
 
-  async remove(id: string) {
+  async remove(id: Types.ObjectId) {
     return this.userModel.findByIdAndDelete(id).exec();
   }
 }

@@ -10,11 +10,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { CreateUserModel } from 'src/users/model/create-user.model';
 import { AuthService } from './auth.service';
 import { AuthModel } from './model/auth.model';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { AccessTokenGuard } from './guards/access-token.guard';
+import { Types } from 'mongoose';
+import { User } from 'src/users/schemas/user.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -22,8 +23,8 @@ export class AuthController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post('signup')
-  signup(@Body() createUserModel: CreateUserModel) {
-    return this.authService.signUp(createUserModel);
+  signup(@Body() user: User) {
+    return this.authService.signUp(user);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -36,13 +37,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Get('refresh')
   refresh(@Req() req: Request) {
-    if (!req.user || !req.user['sub'] || !req.user['refreshToken']) {
-      throw new BadRequestException(
-        'User information is missing in the request.',
-      );
-    }
-    const userId: string = req.user['sub'];
-    const refreshToken: string = req.user['refreshToken'];
+    const userId = req.user!['sub'] as Types.ObjectId;
+    const refreshToken = req.user!['refreshToken'] as string;
     return this.authService.refreshTokens(userId, refreshToken);
   }
 
@@ -50,6 +46,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Get('logout')
   logout(@Req() req: Request) {
-    return this.authService.logout(req.user!['sub']);
+    return this.authService.logout(req.user!['sub'] as Types.ObjectId);
   }
 }

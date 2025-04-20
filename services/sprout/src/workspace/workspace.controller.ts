@@ -15,10 +15,15 @@ import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { Request } from 'express';
 import mongoose from 'mongoose';
 import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
+import { OrchestratorService } from 'src/orchestrator/orchestrator.service';
+import { RequestContextGuard } from 'src/common/guards/request-context.guard';
 
 @Controller('workspaces')
 export class WorkspaceController {
-  constructor(private readonly workspaceService: WorkspaceService) {}
+  constructor(
+    private readonly orchestratorService: OrchestratorService,
+    private readonly workspaceService: WorkspaceService,
+  ) {}
 
   @UseGuards(AccessTokenGuard)
   @Post()
@@ -55,10 +60,9 @@ export class WorkspaceController {
     return this.workspaceService.update(userId, id, updateWorkspaceDto);
   }
 
-  @UseGuards(AccessTokenGuard)
+  @UseGuards(AccessTokenGuard, RequestContextGuard)
   @Delete(':id')
-  remove(@Req() req: Request, @Param('id') id: mongoose.Types.ObjectId) {
-    const userId = req.user!['sub'] as mongoose.Types.ObjectId;
-    return this.workspaceService.remove(userId, id);
+  remove(@Param('id') id: mongoose.Types.ObjectId) {
+    return this.orchestratorService.deleteWorkspace(id);
   }
 }

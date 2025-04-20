@@ -25,7 +25,7 @@ export class Workspace {
 
   @Prop({
     default: [],
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Folder' }],
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }],
   })
   tags: mongoose.Types.ObjectId[];
 }

@@ -4,10 +4,12 @@ import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import mongoose, { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Workspace, WorkspaceDocument } from './schemas/workspace.schemas';
+import { RequestContextService } from 'src/common/service/request-context.service';
 
 @Injectable()
 export class WorkspaceService {
   constructor(
+    private readonly requestContext: RequestContextService,
     @InjectModel(Workspace.name)
     private workspaceModel: Model<WorkspaceDocument>,
   ) {}
@@ -43,7 +45,7 @@ export class WorkspaceService {
   }
 
   async findOneByName(userId: mongoose.Types.ObjectId, name: string) {
-    return this.workspaceModel.find({ ownerId: userId, name }).exec();
+    return this.workspaceModel.findOne({ ownerId: userId, name }).exec();
   }
 
   async update(
@@ -58,9 +60,40 @@ export class WorkspaceService {
       .exec();
   }
 
-  async remove(userId: mongoose.Types.ObjectId, id: mongoose.Types.ObjectId) {
+  async existsByIdAndOwned(
+    id: mongoose.Types.ObjectId,
+    userId: mongoose.Types.ObjectId,
+  ) {
+    return this.workspaceModel.exists({ _id: id, ownerId: userId }).exec();
+  }
+
+  async removeById(workspaceId: mongoose.Types.ObjectId) {
+    return this.workspaceModel.findByIdAndDelete(workspaceId).exec();
+  }
+
+  async addFolderById(
+    workspaceId: mongoose.Types.ObjectId,
+    folderId: mongoose.Types.ObjectId,
+  ) {
     return this.workspaceModel
-      .findOneAndDelete({ _id: id, ownerId: userId })
+      .findOneAndUpdate(
+        { _id: workspaceId },
+        { $addToSet: { folderIds: folderId } },
+        { new: true },
+      )
+      .exec();
+  }
+
+  async removeFolderById(
+    workspaceId: mongoose.Types.ObjectId,
+    folderId: mongoose.Types.ObjectId,
+  ) {
+    return this.workspaceModel
+      .findOneAndUpdate(
+        { _id: workspaceId },
+        { $pull: { folderIds: folderId } },
+        { new: true },
+      )
       .exec();
   }
 }

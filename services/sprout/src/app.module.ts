@@ -7,10 +7,10 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { WorkspaceModule } from './workspace/workspace.module';
 
 @Module({
   imports: [
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, 'assets', 'notes'),
       serveRoot: '/assets/notes',
@@ -21,6 +21,7 @@ import { AuthModule } from './auth/auth.module';
     ),
     UsersModule,
     AuthModule,
+    WorkspaceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
